@@ -1,0 +1,15 @@
+{
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./node_modules"
+    ],
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "outDir": "./build",
+        "strict": true,
+        "target": "es6",
+        "module": "commonjs"
+    }
+}

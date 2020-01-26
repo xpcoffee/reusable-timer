@@ -29,8 +29,8 @@ export function createTimer() {
     }
 
     const buttonDiv = document.createElement("div");
-    buttonDiv.appendChild(startButton);
     buttonDiv.appendChild(resetButton);
+    buttonDiv.appendChild(startButton);
     buttonDiv.appendChild(stopButton);
 
     const countDisplay = document.createElement("span");

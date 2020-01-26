@@ -1,3 +1,5 @@
+import { createTimer } from "./timer";
+
 function main() {
     const app = document.getElementById("App");
 
@@ -6,10 +8,7 @@ function main() {
         return;
     }
 
-    const hello = document.createElement("span");
-    hello.innerText = "Hello there!";
-
-    app.appendChild(hello);
+    app.appendChild(createTimer());
 }
 
 window.onload = main;

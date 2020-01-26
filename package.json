@@ -2,9 +2,11 @@
   "name": "reusable-timer",
   "version": "1.0.0",
   "description": "A reusable timer",
-  "main": "src/index.ts",
+  "private": true,
   "scripts": {
-    "build": "npm run clean && mkdir build && tsc && cp index.html build",
+    "build": "webpack && cp ./index.html dist",
+    "watch": "webpack --watch",
+    "server": "webpack-dev-server --open",
     "clean": "rm -rf build",
     "test": "echo \"No tests yet\""
   },
@@ -26,6 +28,10 @@
   },
   "homepage": "https://github.com/xpcoffee/reusable-timer#readme",
   "devDependencies": {
-    "typescript": "^3.7.5"
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
   }
 }

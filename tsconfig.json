@@ -10,6 +10,13 @@
         "outDir": "./build",
         "strict": true,
         "target": "es6",
-        "module": "commonjs"
+        "module": "commonjs",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "lib": [
+            "dom",
+            "es6",
+            // "scripthost"
+        ]
     }
 }

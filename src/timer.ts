@@ -37,7 +37,7 @@ function createNewWorker() {
     const uri = URL.createObjectURL(blob);
 
     const worker = new Worker(uri);
-    // URL.revokeObjectURL(uri);
+    URL.revokeObjectURL(uri);
     return worker;
 }
 

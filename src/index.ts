@@ -1,3 +1,4 @@
+import './style.css';
 import { createTimer } from "./timer";
 
 function main() {

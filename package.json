@@ -4,7 +4,7 @@
   "description": "A reusable timer",
   "private": true,
   "scripts": {
-    "build": "webpack && cp ./index.html dist",
+    "build": "webpack",
     "watch": "webpack --watch",
     "server": "webpack-dev-server --open",
     "clean": "rm -rf build",
@@ -28,6 +28,13 @@
   },
   "homepage": "https://github.com/xpcoffee/reusable-timer#readme",
   "devDependencies": {
+    "autoprefixer": "^9.7.4",
+    "css-loader": "^3.4.2",
+    "html-webpack-plugin": "^3.2.0",
+    "postcss": "^7.0.26",
+    "postcss-loader": "^3.0.0",
+    "style-loader": "^1.1.3",
+    "tailwindcss": "^1.1.4",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.5",
     "webpack": "^4.41.5",

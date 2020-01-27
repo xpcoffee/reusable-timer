@@ -27,7 +27,6 @@ export function createTimer(ontick: (count: number) => void) {
     return { start, stop, reset };
 }
 
-// Creates a new worker
 function createNewWorker() {
     // Unfortunately, the webworker API expects a file/URI from whic to load code
     // So we need to turn our worker code into a text blob and create a URI that points to the result
@@ -41,6 +40,7 @@ function createNewWorker() {
     return worker;
 }
 
+// Placing the worker code in a function allows us to get the code as a string; we need that text code when creating a new worker.
 function workerFn() {
     // find a way to share this with main file
     const ACTIONS = {

@@ -8,6 +8,25 @@
 </head>
 
 <body>
-    <h1>Reusable timer</h1>
-    <div id="App"></div>
+    <div class="flex">
+        <div class="flex-1"></div>
+        <div class="container relative flex-0">
+            <div class="container flex flex-col text-center" id="app">
+                <h1 class="text-3xl">Reusable timer</h1>
+                <div class="py-2"></div>
+                <div class="flex">
+                    <div class="py-2"></div>
+                    <button class="flex-1 bg-gray-200 hover:bg-gray-400 py-3 rounded-l-lg"
+                        id="resetButton">Reset</button>
+                    <button class="flex-1 bg-gray-200 hover:bg-gray-400 py-3" id="startButton">Start</button>
+                    <button class="flex-1 bg-gray-200 hover:bg-gray-400 py-3 rounded-r-lg" id="stopButton">Stop</button>
+                </div>
+                <div class="py-2"></div>
+                <div>
+                    <span class="text-4xl" id="count"></span>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1"></div>
+    </div>
 </body>

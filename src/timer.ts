@@ -1,4 +1,4 @@
-export function createTimer() {
+export function createTimer(ontick: (count: number) => void) {
     const ACTIONS = {
         "START": 1,
         "STOP": 2,
@@ -7,45 +7,24 @@ export function createTimer() {
 
     const worker = createNewWorker();
     worker.onmessage = function ({ data: count }) {
-        countDisplay.innerText = count;
+        ontick(count);
     }
 
-    const resetButton = document.createElement("button");
-    resetButton.innerText = "Reset";
-    resetButton.onclick = function () {
+    function reset() {
         worker.postMessage(ACTIONS.RESET);
     }
 
-    const stopButton = document.createElement("button");
-    stopButton.innerText = "Stop";
-    stopButton.onclick = function () {
+    function stop() {
         worker.postMessage(ACTIONS.STOP);
     }
 
-    const startButton = document.createElement("button");
-    startButton.innerText = "Start";
-    startButton.onclick = function () {
+    function start() {
         worker.postMessage(ACTIONS.START);
     }
 
-    const buttonDiv = document.createElement("div");
-    buttonDiv.appendChild(resetButton);
-    buttonDiv.appendChild(startButton);
-    buttonDiv.appendChild(stopButton);
-
-    const countDisplay = document.createElement("span");
-    countDisplay.id = "counter";
-    countDisplay.innerText = Number(1).toString();
-    const countDiv = document.createElement("div");
-    countDiv.appendChild(countDisplay)
-
-    const timer = document.createElement("div");
-    timer.appendChild(buttonDiv);
-    timer.appendChild(countDiv);
-
     worker.postMessage(ACTIONS.START);
 
-    return timer;
+    return { start, stop, reset };
 }
 
 // Creates a new worker
@@ -69,8 +48,6 @@ function workerFn() {
         "STOP": 2,
         "RESET": 3,
     }
-
-    console.log("loaded");
 
     let count: number = 1;
     let timerActive: boolean = false;

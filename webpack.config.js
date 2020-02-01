@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const Visualizer = require('webpack-visualizer-plugin');
 
 module.exports = {
   entry: "./src/index.tsx",
@@ -24,10 +25,15 @@ module.exports = {
     ]
   },
   target: "web",
+  externals: [
+  ],
   plugins: [
     new HtmlWebpackPlugin({
       template: "index.html",
       filename: "index.html"
+    }),
+    new Visualizer({
+      filename: './statistics.html'
     })
   ],
   resolve: {

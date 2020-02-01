@@ -36,29 +36,29 @@ function Timer() {
         setTimer(createTimer(ontick));
     }, [])
 
-    const title = <h1 class="text-6xl text-gray-800">Reusable timer</h1>;
+    const title = <h1 class="text-6xl text-gray-400">Reusable timer</h1>;
     const resetButton = <button
         onClick={timer.reset}
-        class="flex-auto px-6 text-4xl text-gray-200 bg-gray-700 font-semibold hover:bg-gray-500 py-3 rounded-lg border-2 border-solid border-transparent focus:border-gray-400 focus:border-dashed focus:outline-none active:bg-gray-700"
+        class="px-6 text-3xl text-gray-700 font-bold bg-gray-200 border-solid border-4 border-gray-700 hover:bg-gray-500 py-3 rounded focus:border-dashed focus:outline-none active:bg-gray-200"
         id="resetButton">Reset</button>;
     const startButton =
         <button onClick={timer.start}
-            class="px-6 text-4xl text-gray-200 font-semibold bg-gray-700 hover:bg-gray-500 py-3 rounded-l-lg border-2 border-transparent border-solid focus:border-gray-400 focus:border-dashed  focus:outline-none active:bg-gray-700"
+            class="px-6 text-3xl text-gray-700 font-bold bg-gray-200 border-solid border-4 border-gray-700 hover:bg-gray-500 py-3 rounded-l focus:border-dashed focus:outline-none active:bg-gray-200"
             id="startButton">Start</button>;
     const stopButton = <button
         onClick={timer.stop}
-        class="px-6 text-3xl text-gray-700 font-bold bg-gray-200 border-solid border-2 border-gray-700 hover:bg-gray-500 py-3 rounded-r-lg focus:border-dashed focus:outline-none active:bg-gray-200"
+        class="px-6 text-3xl text-gray-400 font-semibold bg-gray-700 py-3 rounded-r border-4 border-transparent border-solid focus:border-gray-400 focus:border-dashed focus:outline-none"
         id="stopButton">Stop</button>;
-    const counter = <span class="text-6xl text-gray-800" id="count">{count}</span>;
+    const counter = <span class="text-6xl text-gray-200" id="count">{count}</span>;
 
-    return <div class="bg-gray-200 flex h-screen items-center justify-center">
+    return <div class="bg-gray-800 flex h-screen items-center justify-center">
         <div class="flex-auto max-w-xl flex flex-col">
             <div class="flex-8">
                 <div class="flex flex-col text-center" id="app">
                     {title}
-                    <div class="flex pt-10 pb-6">
-                        <div class="flex-auto">{resetButton}</div>
-                        <div class="flex flex-auto">
+                    <div class="flex pt-10 pb-6 justify-center">
+                        <div class="m-4">{resetButton}</div>
+                        <div class="flex m-4">
                             {startButton}
                             {stopButton}
                         </div>

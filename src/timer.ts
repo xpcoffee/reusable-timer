@@ -49,9 +49,8 @@ function workerFn() {
         "RESET": 3,
     }
 
-    let count: number = 1;
-    let timerActive: boolean = false;
-    let locked: boolean = false;
+    let count: number = 0;
+    let intervalId: number | undefined;
 
     /*
      * Get around the typing errors
@@ -63,40 +62,27 @@ function workerFn() {
     addEventListener('message', ({ data }) => {
         switch (data) {
             case ACTIONS.RESET:
-                count = 1;
+                count = 0;
                 break;
             case ACTIONS.START:
-                if (!timerActive) {
-                    timerActive = true;
-                    tick();
+                if (!intervalId) {
+                    console.log('starting to tick');
+                    intervalId = tick();
                 }
                 break;
             case ACTIONS.STOP:
-                timerActive = false;
+                if (intervalId) {
+                    clearInterval(intervalId);
+                }
+                intervalId = undefined;
                 break;
         }
 
         context.postMessage(count);
     })
 
-    function tick(newTick: boolean = true) {
-        if (newTick && locked) {
-            // don't start new ticks if one is already going
-            return;
-        }
-
-        if (newTick && !locked) {
-            locked = true;
-        }
-
-        context.postMessage(count)
-        setTimeout(function () {
-            count++;
-            if (timerActive) {
-                tick(false)
-            } else {
-                locked = false; // release lock
-            }
-        }, 1000);
+    function tick(): number {
+        // typecast to get around the node typeings - I need to understand how to correctly set the types later
+        return setInterval(() => { count++; context.postMessage(count) }, 1000) as unknown as number;
     }
 }

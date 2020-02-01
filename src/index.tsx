@@ -39,7 +39,7 @@ function Timer() {
     const title = <h1 class="text-6xl text-gray-400">Reusable timer</h1>;
     const resetButton = <button
         onClick={timer.reset}
-        class="px-6 text-3xl text-gray-700 font-bold bg-gray-200 border-solid border-4 border-gray-700 hover:bg-gray-500 py-3 rounded focus:border-dashed focus:outline-none active:bg-gray-200"
+        class="px-6 text-3xl text-gray-700 font-semibold bg-gray-200 hover:bg-gray-500 py-3 rounded border-2 border-transparent focus:border-orange-500 focus:outline-none active:bg-gray-400"
         id="resetButton">Reset</button>;
     const counter = <span class="text-6xl text-gray-200" id="count">{count}</span>;
 
@@ -48,7 +48,7 @@ function Timer() {
             <div class="flex-8">
                 <div class="flex flex-col text-center" id="app">
                     {title}
-                    <div class="flex pt-10 pb-6 justify-center">
+                    <div class="flex pt-10 pb-6 justify-center items-center">
                         <div class="m-4">{resetButton}</div>
                         <Toggle
                             activateLabel="Start"
@@ -67,24 +67,20 @@ function Timer() {
 function Toggle({ onToggle, initiallyActive = false, activateLabel, deactivateLabel }: { onToggle: (active: boolean) => void, initiallyActive?: boolean, activateLabel: string, deactivateLabel: string }) {
     const [active, setActive] = useState<boolean>(initiallyActive);
 
-    const activeClasses = "bg-gray-200 focus:border-dashed rounded";
-    const inactiveClasses = "";
+    const label = active ? deactivateLabel : activateLabel;
+    const position = active ? "justify-end" : "justify-start";
 
-    const left =
-        <div class={`px-6 text-3xl text-gray-700 font-semibold border-solid py-3 focus:outline-none ${active ? inactiveClasses : activeClasses}`}
-            id="startButton">{activateLabel}</div>;
-    const right = <div
-        class={`px-6 text-3xl text-gray-700 font-semibold py-3 border-solid focus:outline-none ${active ? activeClasses : inactiveClasses}`}
-        id="stopButton">{deactivateLabel}</div>;
+    const slider =
+        <div class="px-6 text-3xl text-gray-700 font-semibold border-solid py-3 focus:outline-none bg-gray-200 focus:border-dashed rounded"
+            id="startButton">{label}</div>;
 
-    return <button class="flex m-4 bg-gray-700 hover:bg-gray-500 border-gray-700 border-4 rounded focus:outline-none focus:border-gray-200 focus:border-dashed focus:outline-none active:bg-gray-200"
+    return <button class={`flex m-4 bg-gray-700 w-64 hover:bg-gray-500 border-transaparent p-2 rounded focus:outline-none border-2 border-transparent focus:border-orange-500 focus:outline-none active:bg-gray-400 ${position}`}
         onClick={() => {
             const newState = !active;
             setActive(newState);
             onToggle(newState);
         }
         }>
-        {left}
-        {right}
+        {slider}
     </button>
 }

@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: "./src/index.tsx",
@@ -35,6 +36,10 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "App.js"
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
   },
   devServer: {
     contentBase: path.join(__dirname, "dist"),

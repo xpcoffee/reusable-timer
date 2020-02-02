@@ -49,7 +49,7 @@ function workerFn() {
         "RESET": 3,
     }
 
-    let count: number = 0;
+    let count: number = 90061;
     let intervalId: number | undefined;
 
     /*

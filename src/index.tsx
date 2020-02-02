@@ -69,21 +69,28 @@ function CountDisplay({ count }: { count: number }) {
         nextState: (countInSeconds: number) => CountDisplayState;
     }
 
+    const SECONDS_PER_MINUTE = 60;
+    const MINUTES_PER_HOUR = 60;
+    const SECONDS_PER_HOUR = MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
+    const HOURS_PER_DAY = 24;
+    const MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR;
+    const SECONDS_PER_DAY = HOURS_PER_DAY * SECONDS_PER_HOUR;
+
     const states: { [key: string]: CountDisplayState } = {
         seconds: {
             render: (count: number) => <span class="text-6xl text-gray-200" id="count">{count}s</span>,
             nextState: () => states.minutes,
         },
         minutes: {
-            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / 60)}m {count % 60}s</span>,
+            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / SECONDS_PER_MINUTE)}m {count % SECONDS_PER_MINUTE}s</span>,
             nextState: () => states.hours,
         },
         hours: {
-            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / 3600)}h {Math.floor((count % 3600) / 60)}m {count % 60}s</span>,
+            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / SECONDS_PER_HOUR)}h {Math.floor((count % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE)}m {count % SECONDS_PER_MINUTE}s</span>,
             nextState: () => states.days,
         },
         days: {
-            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / 86400)}d {Math.floor((count % 86400) / 3600)}h {Math.floor((count % 3600) / 60)}m {count % 60}s</span>,
+            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / SECONDS_PER_DAY)}d {Math.floor(count % SECONDS_PER_DAY / SECONDS_PER_HOUR)}h {Math.floor((count % SECONDS_PER_DAY % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE)}m {count % SECONDS_PER_MINUTE}s</span>,
             nextState: () => states.seconds,
         },
     }

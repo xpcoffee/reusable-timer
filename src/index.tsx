@@ -1,5 +1,5 @@
-import { h, render } from "preact";
-import { useState, useRef, useErrorBoundary, useEffect } from "preact/hooks";
+import { h, render, JSX } from "preact";
+import { useState, useEffect } from "preact/hooks";
 import './style.css';
 import { createTimer } from "./timer";
 
@@ -41,7 +41,6 @@ function Timer() {
         onClick={timer.reset}
         class="px-6 text-3xl text-gray-700 font-semibold bg-gray-200 hover:bg-gray-500 py-3 rounded border-2 border-transparent focus:border-orange-500 focus:outline-none active:bg-gray-400"
         id="resetButton">Reset</button>;
-    const counter = <span class="text-6xl text-gray-200" id="count">{count}</span>;
 
     return <div class="bg-gray-800 flex h-screen items-center justify-center">
         <div class="flex-auto max-w-xl flex flex-col">
@@ -56,12 +55,46 @@ function Timer() {
                             initiallyActive={true}
                             onToggle={active => { active ? timer.start() : timer.stop() }} />
                     </div>
-                    <div>{counter}</div>
+                    <CountDisplay count={count} />
                 </div>
             </div>
             <div class="h-56"></div>
         </div>
     </div>;
+}
+
+function CountDisplay({ count }: { count: number }) {
+    interface CountDisplayState {
+        render: (countInSeconds: number) => JSX.Element;
+        nextState: (countInSeconds: number) => CountDisplayState;
+    }
+
+    const states: { [key: string]: CountDisplayState } = {
+        seconds: {
+            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{count}s</span>,
+            nextState: () => states.minutes,
+        },
+        minutes: {
+            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / 60)}m {count % 60}s</span>,
+            nextState: () => states.hours,
+        },
+        hours: {
+            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / 3600)}h {Math.floor((count % 3600) / 60)}m {count % 60}s</span>,
+            nextState: () => states.days,
+        },
+        days: {
+            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / 86400)}d {Math.floor((count % 86400) / 3600)}h {Math.floor((count % 3600) / 60)}m {count % 60}s</span>,
+            nextState: () => states.seconds,
+        },
+    }
+
+    const [displayState, setDisplayState] = useState<CountDisplayState>(states.seconds);
+
+    return <button
+        class="border-2 border-transparent focus:border-orange-500 focus:outline-none"
+        onClick={() => setDisplayState(displayState.nextState(count))}>
+        {displayState.render(count)}
+    </button>;
 }
 
 function Toggle({ onToggle, initiallyActive = false, activateLabel, deactivateLabel }: { onToggle: (active: boolean) => void, initiallyActive?: boolean, activateLabel: string, deactivateLabel: string }) {

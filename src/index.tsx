@@ -121,6 +121,7 @@ function Toggle({
     const actionText = active ? deactivateLabelText : activateLabelText;
     const statusText = active ? activeLabelText : inactiveLabelText;
     const position = active ? "justify-end" : "justify-start";
+    const background = active ? "bg-orange-400" : "bg-gray-700";
 
     const slider =
         <div class="px-6 text-3xl text-gray-700 font-semibold border-solid py-3 focus:outline-none bg-gray-200 focus:border-dashed rounded"
@@ -131,7 +132,7 @@ function Toggle({
             <span>{statusLabelText}</span>
             <span>{statusText}</span>
         </div>
-        <button class={`flex m-4 bg-gray-700 w-64 hover:bg-gray-500 border-transaparent p-2 rounded focus:outline-none border-2 border-transparent focus:border-orange-500 focus:outline-none active:bg-gray-400 ${position}`}
+        <button class={`flex m-4 ${background} w-64 hover:bg-gray-500 border-transaparent p-2 rounded focus:outline-none border-2 border-transparent focus:border-orange-500 focus:outline-none active:bg-gray-400 ${position}`}
             onClick={() => {
                 const newState = !active;
                 setActive(newState);

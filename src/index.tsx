@@ -4,8 +4,6 @@ import './style.css';
 import { createTimer } from "./timer";
 import { minuteFormat, hourFormat, dayFormat } from "./timeFormats";
 
-render(<App />, document.getElementById('app') as Element);
-
 function App() {
     try {
         return Timer();
@@ -128,3 +126,5 @@ function Toggle({
         {slider}
     </button>
 }
+
+render(<App />, document.getElementById('app') as Element);

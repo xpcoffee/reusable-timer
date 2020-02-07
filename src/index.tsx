@@ -49,9 +49,12 @@ function Timer() {
                     <div class="flex pt-10 pb-6 justify-center items-center">
                         <div class="m-4">{resetButton}</div>
                         <Toggle
-                            activateLabel="Start"
-                            deactivateLabel="Stop"
+                            activateLabelText="Start"
+                            deactivateLabelText="Stop"
                             initiallyActive={true}
+                            activeLabelText="Counting"
+                            inactiveLabelText="Stopped"
+                            statusLabelText="Status"
                             onToggle={active => { active ? timer.start() : timer.stop() }} />
                     </div>
                     <CountDisplay countInSeconds={countInSeconds} />
@@ -99,32 +102,44 @@ function CountDisplay({ countInSeconds }: { countInSeconds: number }) {
 function Toggle({
     onToggle,
     initiallyActive = false,
-    activateLabel,
-    deactivateLabel
+    activateLabelText,
+    deactivateLabelText,
+    activeLabelText,
+    inactiveLabelText,
+    statusLabelText
 }: {
     onToggle: (active: boolean) => void,
     initiallyActive?: boolean,
-    activateLabel: string,
-    deactivateLabel: string
+    activateLabelText: string,
+    deactivateLabelText: string,
+    activeLabelText: string,
+    inactiveLabelText: string
+    statusLabelText: string
 }) {
     const [active, setActive] = useState<boolean>(initiallyActive);
 
-    const label = active ? deactivateLabel : activateLabel;
+    const actionText = active ? deactivateLabelText : activateLabelText;
+    const statusText = active ? activeLabelText : inactiveLabelText;
     const position = active ? "justify-end" : "justify-start";
 
     const slider =
         <div class="px-6 text-3xl text-gray-700 font-semibold border-solid py-3 focus:outline-none bg-gray-200 focus:border-dashed rounded"
-            id="startButton">{label}</div>;
+            id="startButton">{actionText}</div>;
 
-    return <button class={`flex m-4 bg-gray-700 w-64 hover:bg-gray-500 border-transaparent p-2 rounded focus:outline-none border-2 border-transparent focus:border-orange-500 focus:outline-none active:bg-gray-400 ${position}`}
-        onClick={() => {
-            const newState = !active;
-            setActive(newState);
-            onToggle(newState);
-        }
-        }>
-        {slider}
-    </button>
+    return <div>
+        <div class="hidden">
+            <span>{statusLabelText}</span>
+            <span>{statusText}</span>
+        </div>
+        <button class={`flex m-4 bg-gray-700 w-64 hover:bg-gray-500 border-transaparent p-2 rounded focus:outline-none border-2 border-transparent focus:border-orange-500 focus:outline-none active:bg-gray-400 ${position}`}
+            onClick={() => {
+                const newState = !active;
+                setActive(newState);
+                onToggle(newState);
+            }
+            }>
+            {slider}
+        </button></div>
 }
 
 render(<App />, document.getElementById('app') as Element);

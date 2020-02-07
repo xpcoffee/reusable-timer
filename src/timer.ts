@@ -1,4 +1,4 @@
-export function createTimer(ontick: (count: number) => void) {
+export function createTimer(ontick: (countInSeconds: number) => void) {
     const ACTIONS = {
         "START": 1,
         "STOP": 2,
@@ -6,8 +6,8 @@ export function createTimer(ontick: (count: number) => void) {
     }
 
     const worker = createNewWorker();
-    worker.onmessage = function ({ data: count }) {
-        ontick(count);
+    worker.onmessage = function ({ data: countInSeconds }) {
+        ontick(countInSeconds);
     }
 
     function reset() {
@@ -49,7 +49,7 @@ function workerFn() {
         "RESET": 3,
     }
 
-    let count: number = 90061;
+    let countInSeconds: number = 0;
     let intervalId: number | undefined;
 
     /*
@@ -62,7 +62,7 @@ function workerFn() {
     addEventListener('message', ({ data }) => {
         switch (data) {
             case ACTIONS.RESET:
-                count = 0;
+                countInSeconds = 0;
                 break;
             case ACTIONS.START:
                 if (!intervalId) {
@@ -78,11 +78,11 @@ function workerFn() {
                 break;
         }
 
-        context.postMessage(count);
+        context.postMessage(countInSeconds);
     })
 
     function tick(): number {
         // typecast to get around the node typeings - I need to understand how to correctly set the types later
-        return setInterval(() => { count++; context.postMessage(count) }, 1000) as unknown as number;
+        return setInterval(() => { countInSeconds++; context.postMessage(countInSeconds) }, 1000) as unknown as number;
     }
 }

@@ -2,6 +2,7 @@ import { h, render, JSX } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import './style.css';
 import { createTimer } from "./timer";
+import { minuteFormat, hourFormat, dayFormat } from "./timeFormats";
 
 render(<App />, document.getElementById('app') as Element);
 
@@ -24,10 +25,10 @@ function Broken(error: unknown) {
 }
 
 function Timer() {
-    const [count, setCount] = useState(0);
+    const [countInSeconds, setCountInSeconds] = useState(0);
 
-    function ontick(count: number) {
-        setCount(count);
+    function ontick(seconds: number) {
+        setCountInSeconds(seconds);
     }
 
     const [timer, setTimer] = useState<{ start: () => void; stop: () => void; reset: () => void }>({ start: () => { }, stop: () => { }, reset: () => { } });
@@ -55,7 +56,7 @@ function Timer() {
                             initiallyActive={true}
                             onToggle={active => { active ? timer.start() : timer.stop() }} />
                     </div>
-                    <CountDisplay count={count} />
+                    <CountDisplay countInSeconds={countInSeconds} />
                 </div>
             </div>
             <div class="h-56"></div>
@@ -63,48 +64,51 @@ function Timer() {
     </div>;
 }
 
-function CountDisplay({ count }: { count: number }) {
-    interface CountDisplayState {
-        render: (countInSeconds: number) => JSX.Element;
-        nextState: (countInSeconds: number) => CountDisplayState;
-    }
+interface CountDisplayState {
+    render: (countInSeconds: number) => JSX.Element;
+    nextState: (countInSeconds: number) => CountDisplayState;
+}
 
-    const SECONDS_PER_MINUTE = 60;
-    const MINUTES_PER_HOUR = 60;
-    const SECONDS_PER_HOUR = MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
-    const HOURS_PER_DAY = 24;
-    const MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR;
-    const SECONDS_PER_DAY = HOURS_PER_DAY * SECONDS_PER_HOUR;
+const COUNT_DISPLAY_STATES: { [key: string]: CountDisplayState } = {
+    seconds: {
+        render: (countInSeconds: number) => <span class="text-6xl text-gray-200" id="count">{countInSeconds}s</span>,
+        nextState: () => COUNT_DISPLAY_STATES.minutes,
+    },
+    minutes: {
+        render: (countInSeconds: number) => <span class="text-6xl text-gray-200" id="count">{minuteFormat(countInSeconds)}</span>,
+        nextState: () => COUNT_DISPLAY_STATES.hours,
+    },
+    hours: {
+        render: (countInSeconds: number) => <span class="text-6xl text-gray-200" id="count">{hourFormat(countInSeconds)}</span>,
+        nextState: () => COUNT_DISPLAY_STATES.days,
+    },
+    days: {
+        render: (countInSeconds: number) => <span class="text-6xl text-gray-200" id="count">{dayFormat(countInSeconds)}</span>,
+        nextState: () => COUNT_DISPLAY_STATES.seconds,
+    },
+}
 
-    const states: { [key: string]: CountDisplayState } = {
-        seconds: {
-            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{count}s</span>,
-            nextState: () => states.minutes,
-        },
-        minutes: {
-            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / SECONDS_PER_MINUTE)}m {count % SECONDS_PER_MINUTE}s</span>,
-            nextState: () => states.hours,
-        },
-        hours: {
-            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / SECONDS_PER_HOUR)}h {Math.floor((count % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE)}m {count % SECONDS_PER_MINUTE}s</span>,
-            nextState: () => states.days,
-        },
-        days: {
-            render: (count: number) => <span class="text-6xl text-gray-200" id="count">{Math.floor(count / SECONDS_PER_DAY)}d {Math.floor(count % SECONDS_PER_DAY / SECONDS_PER_HOUR)}h {Math.floor((count % SECONDS_PER_DAY % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE)}m {count % SECONDS_PER_MINUTE}s</span>,
-            nextState: () => states.seconds,
-        },
-    }
-
-    const [displayState, setDisplayState] = useState<CountDisplayState>(states.seconds);
+function CountDisplay({ countInSeconds }: { countInSeconds: number }) {
+    const [displayState, setDisplayState] = useState<CountDisplayState>(COUNT_DISPLAY_STATES.seconds);
 
     return <button
         class="border-2 border-transparent focus:border-orange-500 focus:outline-none"
-        onClick={() => setDisplayState(displayState.nextState(count))}>
-        {displayState.render(count)}
+        onClick={() => setDisplayState(displayState.nextState(countInSeconds))}>
+        {displayState.render(countInSeconds)}
     </button>;
 }
 
-function Toggle({ onToggle, initiallyActive = false, activateLabel, deactivateLabel }: { onToggle: (active: boolean) => void, initiallyActive?: boolean, activateLabel: string, deactivateLabel: string }) {
+function Toggle({
+    onToggle,
+    initiallyActive = false,
+    activateLabel,
+    deactivateLabel
+}: {
+    onToggle: (active: boolean) => void,
+    initiallyActive?: boolean,
+    activateLabel: string,
+    deactivateLabel: string
+}) {
     const [active, setActive] = useState<boolean>(initiallyActive);
 
     const label = active ? deactivateLabel : activateLabel;

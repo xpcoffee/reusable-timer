@@ -41,6 +41,8 @@ function Timer() {
         class="px-6 text-3xl text-gray-700 font-semibold bg-gray-200 hover:bg-gray-500 py-3 rounded border-2 border-transparent focus:shadow-outline focus:outline-none active:bg-gray-400"
         id="resetButton">Reset</button>;
 
+    const [active, setActive] = useState<boolean>(false);
+
     return <div class="bg-gray-800 flex h-screen items-center justify-center">
         <div class="flex-auto max-w-xl flex flex-col">
             <div class="flex-8">
@@ -49,13 +51,16 @@ function Timer() {
                     <div class="flex pt-10 pb-6 justify-center items-center">
                         <div class="m-4">{resetButton}</div>
                         <Toggle
+                            active={active}
                             activateLabelText="Start"
                             deactivateLabelText="Stop"
-                            initiallyActive={true}
                             activeLabelText="Counting"
                             inactiveLabelText="Stopped"
                             statusLabelText="Status"
-                            onToggle={active => { active ? timer.start() : timer.stop() }} />
+                            onToggle={active => {
+                                active ? timer.start() : timer.stop();
+                                setActive(active);
+                            }} />
                     </div>
                     <CountDisplay countInSeconds={countInSeconds} />
                 </div>
@@ -100,23 +105,22 @@ function CountDisplay({ countInSeconds }: { countInSeconds: number }) {
 }
 
 function Toggle({
+    active,
     onToggle,
-    initiallyActive = false,
     activateLabelText,
     deactivateLabelText,
     activeLabelText,
     inactiveLabelText,
     statusLabelText
 }: {
+    active: boolean,
     onToggle: (active: boolean) => void,
-    initiallyActive?: boolean,
     activateLabelText: string,
     deactivateLabelText: string,
     activeLabelText: string,
     inactiveLabelText: string
     statusLabelText: string
 }) {
-    const [active, setActive] = useState<boolean>(initiallyActive);
 
     const actionText = active ? deactivateLabelText : activateLabelText;
     const statusText = active ? activeLabelText : inactiveLabelText;
@@ -135,7 +139,6 @@ function Toggle({
         <button class={`flex m-4 ${background} w-64 group border-transaparent p-2 rounded focus:outline-none border-2 border-transparent focus:shadow-outline focus:outline-none ${position}`}
             onClick={() => {
                 const newState = !active;
-                setActive(newState);
                 onToggle(newState);
             }
             }>

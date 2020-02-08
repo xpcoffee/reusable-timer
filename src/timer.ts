@@ -22,8 +22,6 @@ export function createTimer(ontick: (countInSeconds: number) => void) {
         worker.postMessage(ACTIONS.START);
     }
 
-    worker.postMessage(ACTIONS.START);
-
     return { start, stop, reset };
 }
 

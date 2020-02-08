@@ -38,7 +38,7 @@ function Timer() {
     const title = <h1 class="text-6xl text-gray-400">Reusable timer</h1>;
     const resetButton = <button
         onClick={timer.reset}
-        class="px-6 text-3xl text-gray-700 font-semibold bg-gray-200 hover:bg-gray-500 py-3 rounded border-2 border-transparent focus:border-orange-500 focus:outline-none active:bg-gray-400"
+        class="px-6 text-3xl text-gray-700 font-semibold bg-gray-200 hover:bg-gray-500 py-3 rounded border-2 border-transparent focus:shadow-outline focus:outline-none active:bg-gray-400"
         id="resetButton">Reset</button>;
 
     return <div class="bg-gray-800 flex h-screen items-center justify-center">
@@ -93,7 +93,7 @@ function CountDisplay({ countInSeconds }: { countInSeconds: number }) {
     const [displayState, setDisplayState] = useState<CountDisplayState>(COUNT_DISPLAY_STATES.seconds);
 
     return <button
-        class="border-2 border-transparent focus:border-orange-500 focus:outline-none"
+        class="border-2 border-transparent focus:shadow-outline focus:outline-none"
         onClick={() => setDisplayState(displayState.nextState(countInSeconds))}>
         {displayState.render(countInSeconds)}
     </button>;
@@ -124,7 +124,7 @@ function Toggle({
     const background = active ? "bg-orange-400" : "bg-gray-700";
 
     const slider =
-        <div class="px-6 text-3xl text-gray-700 font-semibold border-solid py-3 focus:outline-none bg-gray-200 focus:border-dashed rounded"
+        <div class="px-6 text-3xl text-gray-700 font-semibold border-solid py-3 focus:outline-none bg-gray-200 focus:border-dashed rounded group-hover:bg-gray-500"
             id="startButton">{actionText}</div>;
 
     return <div>
@@ -132,7 +132,7 @@ function Toggle({
             <span>{statusLabelText}</span>
             <span>{statusText}</span>
         </div>
-        <button class={`flex m-4 ${background} w-64 hover:bg-gray-500 border-transaparent p-2 rounded focus:outline-none border-2 border-transparent focus:border-orange-500 focus:outline-none active:bg-gray-400 ${position}`}
+        <button class={`flex m-4 ${background} w-64 group border-transaparent p-2 rounded focus:outline-none border-2 border-transparent focus:shadow-outline focus:outline-none ${position}`}
             onClick={() => {
                 const newState = !active;
                 setActive(newState);

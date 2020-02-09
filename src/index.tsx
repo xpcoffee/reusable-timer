@@ -87,20 +87,20 @@ function Timer() {
 
 interface CountDisplayState {
     render: (countInSeconds: number) => JSX.Element;
-    renderEdit: (countInSeconds: number, onEdit: (countInSeconds: number) => void) => JSX.Element;
+    renderEdit: (countInSeconds: number, onEdit: (countInSeconds: number) => void, onConfirm?: () => void) => JSX.Element;
     nextState: (countInSeconds: number) => CountDisplayState;
 }
 
 function EditCountButton({ class: classes, onClick }: { class?: string, onClick?: () => void }) {
-    return <button class={`m-4 border-transparent focus:shadow-outline focus:outline-none ${classes}`} onClick={onClick}><FontAwesomeIcon icon={faEdit}></FontAwesomeIcon></button>
+    return <button aria-label="Edit time" class={`m-4 border-transparent focus:shadow-outline focus:outline-none ${classes}`} onClick={onClick}><FontAwesomeIcon icon={faEdit}></FontAwesomeIcon></button>
 }
 
 function CancelEditCountButton({ class: classes, onClick }: { class?: string, onClick?: () => void }) {
-    return <button class={`m-4 border-transparent focus:shadow-outline focus:outline-none ${classes}`} onClick={onClick}><FontAwesomeIcon icon={faTimesCircle}></FontAwesomeIcon></button>
+    return <button aria-label="Cancel edit" class={`m-4 border-transparent focus:shadow-outline focus:outline-none ${classes}`} onClick={onClick}><FontAwesomeIcon icon={faTimesCircle}></FontAwesomeIcon></button>
 }
 
 function ConfirmEditCountButton({ class: classes, onClick }: { class?: string, onClick?: () => void }) {
-    return <button class={`m-4 border-transparent focus:shadow-outline focus:outline-none ${classes}`} onClick={onClick}><FontAwesomeIcon icon={faCheckCircle}></FontAwesomeIcon></button>
+    return <button aria-label="Confirm edit" class={`m-4 border-transparent focus:shadow-outline focus:outline-none ${classes}`} onClick={onClick}><FontAwesomeIcon icon={faCheckCircle}></FontAwesomeIcon></button>
 }
 
 function FontAwesomeIcon({ icon }: { icon: IconDefinition }) {
@@ -135,16 +135,25 @@ const COUNT_DISPLAY_STATES: { [key: string]: CountDisplayState } = {
     },
 }
 
-function SecondsEditor(count: number, onEdit: (count: number) => void) {
+function SecondsEditor(count: number, onEdit: (count: number) => void, onConfirm?: () => void) {
     return <div class="text-6xl text-gray-700 flex">
+        <h2 id="editorId" class="hidden">Time editor</h2>
+        <span id="secondsInputId">seconds</span>
         <input
+            aria-labelledby="editorId secondsInputId"
             class="mx-2"
             placeholder={count.toString()}
             type="number" style={{ textAlign: "right" }}
+            autoFocus={true}
+            onKeyUp={(event) => {
+                if (event.key === "Enter") {
+                    onConfirm && onConfirm()
+                }
+            }}
             onInput={
                 ({ currentTarget }) => onEdit(Number.parseInt(currentTarget.value))
             }>
-        </input><span>s</span>
+        </input>
     </div>;
 }
 
@@ -154,6 +163,11 @@ function CountDisplay({ countInSeconds, editState, onEditStateChange, onEdit, in
     const [displayState, setDisplayState] = useState<CountDisplayState>(COUNT_DISPLAY_STATES.seconds);
     const [localCount, setLocalCount] = useState(initialCountInSeconds);
 
+    const onConfirm = () => {
+        onEdit(localCount);
+        onEditStateChange("viewing");
+    };
+
     function getEditButton(editState: EditState) {
         switch (editState) {
             case "disabled":
@@ -162,10 +176,7 @@ function CountDisplay({ countInSeconds, editState, onEditStateChange, onEdit, in
                 return <EditCountButton onClick={() => onEditStateChange("editing")} />;
             case "editing":
                 return <div class="flex">
-                    <ConfirmEditCountButton onClick={() => {
-                        onEdit(localCount);
-                        onEditStateChange("viewing");
-                    }} />
+                    <ConfirmEditCountButton onClick={onConfirm} />
                     <CancelEditCountButton onClick={() => {
                         onEditStateChange("viewing");
                     }} />
@@ -174,7 +185,7 @@ function CountDisplay({ countInSeconds, editState, onEditStateChange, onEdit, in
     }
 
     const display = editState === "editing"
-        ? displayState.renderEdit(initialCountInSeconds, countInSeconds => setLocalCount(countInSeconds))
+        ? displayState.renderEdit(initialCountInSeconds, countInSeconds => setLocalCount(countInSeconds), onConfirm)
         : <button
             class="border-2 border-transparent focus:shadow-outline focus:outline-none"
             onClick={() => setDisplayState(displayState.nextState(countInSeconds))}>

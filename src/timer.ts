@@ -1,29 +1,36 @@
-export function createTimer(ontick: (countInSeconds: number) => void) {
-    const ACTIONS = {
-        "START": 1,
-        "STOP": 2,
-        "RESET": 3,
-    }
+export function createTimer(ontick: (countInSeconds: number) => void, initialCountInSeconds: number = 0): Timer {
+    type TimerAction = { type: "start" } | { type: "stop" } | { type: "set", countInSeconds: number }
 
     const worker = createNewWorker();
     worker.onmessage = function ({ data: countInSeconds }) {
         ontick(countInSeconds);
     }
 
-    function reset() {
-        worker.postMessage(ACTIONS.RESET);
+    function set(countInSeconds: number) {
+        const action: TimerAction = { type: "set", countInSeconds }
+        worker.postMessage(action);
     }
 
     function stop() {
-        worker.postMessage(ACTIONS.STOP);
+        const action: TimerAction = { type: "stop" }
+        worker.postMessage(action);
     }
 
     function start() {
-        worker.postMessage(ACTIONS.START);
+        const action: TimerAction = { type: "start" }
+        worker.postMessage(action);
     }
 
-    return { start, stop, reset };
+    set(initialCountInSeconds);
+
+    return { start, stop, set };
 }
+
+export type Timer = {
+    start: () => void,
+    stop: () => void,
+    set: (countInSeconds: number) => void,
+};
 
 function createNewWorker() {
     // Unfortunately, the webworker API expects a file/URI from whic to load code
@@ -40,12 +47,8 @@ function createNewWorker() {
 
 // Placing the worker code in a function allows us to get the code as a string; we need that text code when creating a new worker.
 function workerFn() {
-    // find a way to share this with main file
-    const ACTIONS = {
-        "START": 1,
-        "STOP": 2,
-        "RESET": 3,
-    }
+    // find a way to share this outside of the worker function
+    type TimerAction = { type: "start" } | { type: "stop" } | { type: "set", countInSeconds: number }
 
     let countInSeconds: number = 0;
     let intervalId: number | undefined;
@@ -56,19 +59,22 @@ function workerFn() {
      */
     const context: Worker = self as any;
 
-
     addEventListener('message', ({ data }) => {
-        switch (data) {
-            case ACTIONS.RESET:
-                countInSeconds = 0;
-                break;
-            case ACTIONS.START:
-                if (!intervalId) {
-                    console.log('starting to tick');
+        const message = data as TimerAction;
+        switch (message.type) {
+            case "set":
+                countInSeconds = message.countInSeconds;
+                if (intervalId) {
+                    clearInterval(intervalId);
                     intervalId = tick();
                 }
                 break;
-            case ACTIONS.STOP:
+            case "start":
+                if (!intervalId) {
+                    intervalId = tick();
+                }
+                break;
+            case "stop":
                 if (intervalId) {
                     clearInterval(intervalId);
                 }
@@ -80,7 +86,11 @@ function workerFn() {
     })
 
     function tick(): number {
-        // typecast to get around the node typeings - I need to understand how to correctly set the types later
-        return setInterval(() => { countInSeconds++; context.postMessage(countInSeconds) }, 1000) as unknown as number;
+        const interval = setInterval(() => {
+            countInSeconds > 0 ? countInSeconds-- : clearInterval(interval);
+            context.postMessage(countInSeconds)
+        }, 1000) as unknown as number; // typecast to get around the node typeings - I need to understand how to correctly set the types later
+
+        return interval;
     }
 }

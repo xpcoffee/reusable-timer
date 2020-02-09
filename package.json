@@ -48,8 +48,5 @@
     "webpack-dev-server": "^3.10.1",
     "webpack-visualizer-plugin": "^0.1.11"
   },
-  "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.12.1",
-    "@fortawesome/free-solid-svg-icons": "^5.12.1"
-  }
+  "dependencies": {}
 }
